@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Connexion</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/assets/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/assets/css/signin.css" type="text/css" rel="stylesheet">
+  </head>
+
+  <body class="text-center">
+    <form class="form-signin">
+      <img class="mb-4" src="https://media.discordapp.net/attachments/432942390005727232/438339937532903434/satifrance_logo.png" alt="" width="72" height="72">
+      <h1 class="h3 mb-3 font-weight-normal">Connectez vous</h1>
+      <label for="inputName" class="sr-only">Nom d'utilisateur</label>
+      <input type="text" id="inputName" class="form-control" placeholder="Nom d'utilisateur" required autofocus>
+      <label for="inputPassword" class="sr-only">Mot de passe</label>
+      <input type="password" id="inputPassword" class="form-control" placeholder="Mot de passe" required>
+      <div class="checkbox mb-3">
+        <label>
+          <input type="checkbox" value="remember-me"> Rester connecté
+        </label>
+      </div>
+      <button class="btn btn-lg btn-danger btn-block login" type="submit" disabled>Code barre</button>
+      <button class="btn btn-lg btn-primary btn-block login" id="connection" type="submit" disabled>Connexion</button>
+      <p class="mt-5 mb-3 text-muted">&copy; ptdr t ki</p>
+    </form>
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js" type="text/javascript"></script>
+    <script>
+      var socket = io();
+      socket.on('connect', () => {
+        console.log('Connected.');
+        $('.login').prop("disabled", false);
+
+        socket.on('authenticated', () => {
+          alert('Auth success');
+          window.location.redirect(window.location.href + '/dashboard');
+        });
+
+        socket.on('unauthorized', function(err){
+          console.log("There was an error with the authentication:", err.message);
+        });
+      });
+
+      $('form').submit(e => {
+        console.log('Authentificating');
+        socket.emit('authentication', { username: $('#inputName').val(), password: $('#inputPassword').val() });
+        e.preventDefault();
+      });
+  </script>
+  </body>
+</html>

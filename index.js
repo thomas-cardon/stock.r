@@ -1,7 +1,5 @@
-const Koa = require('koa'), bodyParser = require('koa-bodyparser');
 const mongoose = require('mongoose');
-
-let app = new Koa();
+const path = require('path');
 
 function generate(a,b){for(b=a='';a++<36;b+=a*51&52?(a^15?8^Math.random()*(a^20?16:4):4).toString(16):'-');return b} // Génère un UUID aléatoire
 // Principe UUID: 1 chance sur 1 million de retrouver le même UUID aléatoirement
@@ -10,6 +8,7 @@ const User = mongoose.model('User', {
   id: { type: String, default: generate() },
   firstName: String,
   lastName: String,
+  username: String,
   password: String, // Hash sécurisé
   avatar: { type: String, default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR05-WvgvoVVFR0fQCTWhyhiTHGinaX4FK8-Dux8QrLzrSZ8oQ3SQ' },
   rank: { type: Number, default: 100 },
@@ -25,41 +24,67 @@ const Product = mongoose.model('Product', {
   logs: Array
 });
 
-// const: variable intouchable
+const express = require('express');
 
-mongoose.connect('mongodb://192.168.1.31/barcodes').then(() => {
-  app.use(bodyParser());
+var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
-  // x-response-time - Affiche le temps de réponse dans la réponse
+app.use('/assets', express.static(path.join(__dirname, 'server/assets')));
 
-  app.use(async (ctx, next) => {
-    const start = Date.now();
-    await next();
-    const ms = Date.now() - start;
-    ctx.set('X-Response-Time', `${ms}ms`);
+
+let Storage = require('samss').getStorage('FS', 'file.json');
+
+async function load() {
+  let Storage = await require('samss').getStorage('FS', 'file.json').load();
+  await Storage.default().add('mongoose-address', 'mongodb://192.168.1.31/barcodes').end();
+
+  await mongoose.connect(Storage.get('mongoose-address'));
+
+  /*await new User({ // A N'EXECUTER QU'UNE FOIS SINON CA VA CREER DES UTILISATEURS A CHAQUE LANCEMENT
+    firstName: 'Thomas',
+    lastName: 'Cardon',
+    username: 'Ryzzzen',
+    password: 'zzz000',
+    rank: 1000
+  }).save();
+
+  await new User({
+    firstName: 'Sarah',
+    lastName: 'Duault',
+    username: 'Sealrack',
+    password: 'zzz000',
+    rank: 1000
+  }).save();*/
+
+  app.get('/', (req, res) => res.sendFile(__dirname + '/server/index.html'));
+
+  require('socketio-auth')(io, {
+    authenticate: function (socket, data, callback) {
+      console.dir(arguments);
+
+      //get credentials sent by the client
+      var username = data.username;
+      var password = data.password;
+
+      User.find({ username: username }).exec().then(users => {
+        if (users.length > 0) return callback(null, user.password == password);
+        else return callback(new Error("User not found"));
+      }).catch(err => callback(new Error(err)));
+    },
+    postAuthenticate: function (socket, data) {
+      console.dir(arguments);
+
+      var username = data.username;
+
+      User.find({ username: username }).exec().then(users => {
+        socket.client.user = users[0];
+      });
+    },
+    timeout: 1000
   });
 
-  // Affiche la requête dans la console
+  http.listen(process.argv[3] || 7800, process.argv[2] || '0.0.0.0');
+}
 
-  app.use(async (ctx, next) => {
-    const start = Date.now();
-    await next();
-    const ms = Date.now() - start;
-    console.log(`${ctx.method} ${ctx.url} - ${ms}`);
-  });
-
-  app.use(async (ctx, next) => {
-    if (!ctx.accepts('json')) return ctx.throw(422, 'JSON only');
-    await next();
-  });
-
-  let users = require('./routes/v1/users');
-  let me = require('./routes/v1/me');
-
-  app.use(users.routes()).use(users.allowedMethods());
-  app.use(me.routes()).use(me.allowedMethods());
-
-  app.listen(process.argv[3] || 7800, process.argv[2] || '0.0.0.0');
-
-  console.log(`Started Barcodes server on: ${(process.argv[2] || '0.0.0.0') + ':' + (process.argv[3] || 7800)}. Reminder: Work in progress.`);
-});
+load().then(() => console.log(`Started Barcodes server on: ${(process.argv[2] || '0.0.0.0') + ':' + (process.argv[3] || 7800)}. Reminder: Work in progress.`));

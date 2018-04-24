@@ -9,9 +9,10 @@
   "author": "Ryzzzen,Sealrack",
   "license": "MIT",
   "dependencies": {
-    "koa": "^2.5.0",
-    "koa-bodyparser": "^4.2.0",
-    "koa-router": "^7.4.0",
-    "mongoose": "^5.0.16"
+    "express": "^4.16.3",
+    "mongoose": "^5.0.16",
+    "samss": "^2.2.7",
+    "socket.io": "^2.1.0",
+    "socketio-auth": "^0.1.0"
   }
 }
