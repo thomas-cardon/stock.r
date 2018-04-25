@@ -1,32 +1,32 @@
-const mongoose = require('mongoose');
 const path = require('path');
+
+const mongoose = require('mongoose');
 
 global.generate = function(a,b){for(b=a='';a++<36;b+=a*51&52?(a^15?8^Math.random()*(a^20?16:4):4).toString(16):'-');return b} // Génère un UUID aléatoire
 // Principe UUID: 1 chance sur 1 million de retrouver le même UUID aléatoirement
 
-const Product = mongoose.model('Product', {
-  id: { type: String, default: generate() },
-  name: String,
-  qty: Number,
-  price: Number,
-  location: String,
-  logs: Array
-});
+const express = require('express');
 
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
-var session = require('express-session');
-var MongoStore = require('connect-mongo')(session);
+let app = express();
+let bodyParser = require('body-parser');
+let MongoStore = require('connect-mongo')(require('express-session'));
 
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+let http = require('http').Server(app);
+let io = require('socket.io')(http);
 
-app.use(session({
+let session = require('express-session')({
   saveUninitialized: false,
   resave: true,
   secret: generate(),
   store: new MongoStore({ mongooseConnection: mongoose.connection })
+});
+
+let sharedsession = require("express-socket.io-session");
+
+app.use(session);
+
+io.use(sharedsession(session, {
+    autoSave:true
 }));
 
 /*
@@ -46,10 +46,20 @@ async function load() {
   await mongoose.connect(Storage.get('mongoose-address'));
 
   mongoose.model('User', require('./models/User')); // Modèle utilisateur
-  app.get('/', (req, res) => res.sendFile(__dirname + '/server/login.html'));
+  mongoose.model('Product', require('./models/Product')); // Produit
+  mongoose.model('ProductOutput', require('./models/ProductOutput')); // Sorties de produits
 
-  var routes = require('./routes/users');
-  app.use('/users', routes);
+  /*
+  * Si l'utilisateur à un identifiant d'utilisateur enregistré dans sa session, le serveur le redirige vers l'endpoint /dashboard du routeur /users (=/users/dashboard)
+  * Sinon, il lui envoie la page de connexion
+  */
+  app.get('/', (req, res) => {
+    if (req.session.userId) res.redirect('/dashboard');
+    else res.sendFile(__dirname + '/server/login.html');
+  }); // Redirige les gens sur la page de connexion
+
+  app.use('/users', require('./controllers/routes/users'));
+  app.use('/dashboard', require('./controllers/routes/dashboard'));
 
   // catch 404 and forward to error handler
   app.use(function (req, res, next) {
@@ -61,7 +71,11 @@ async function load() {
   // error handler
   app.use(function (err, req, res, next) {
     res.status(err.status || 500);
-    res.send(err);
+    res.send(err.message);
+  });
+
+  io.on('connection', function(socket) {
+    require('./controllers/sockets/dashboard')(socket);
   });
 
   http.listen(process.argv[3] || 7800, process.argv[2] || '0.0.0.0');
