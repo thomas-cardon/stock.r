@@ -57,5 +57,4 @@ typings/
 # dotenv environment variables file
 .env
 
-encrypted_file.random.ext
-test.js
+file.json

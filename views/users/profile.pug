@@ -1,0 +1,61 @@
+extends ../layout.pug
+block stylesheets
+  link(href='/assets/css/dashboard.css', type='text/css', rel='stylesheet')
+block content
+  .row.m-y-2
+    .col-lg-8.push-lg-4
+      h4.m-y-2= user.firstName + ' ' + user.lastName
+      .row
+        .col-md-6
+          h6 A propos
+          p Travaille secteur C7
+        .col-md-6
+          h6 Informations
+          a.tag.tag-default.tag-pill= user.email
+          hr
+          span.tag.tag-primary
+            i.fa.fa-user
+            |  900 Followers
+          span.tag.tag-success
+            i.fa.fa-cog
+            |  43 Forks
+          span.tag.tag-danger
+            i.fa.fa-eye
+            |  245 Views
+        .col-md-12
+          h4.m-t-2
+            span.fa.fa-clock-o.ion-clock.pull-xs-right
+            |  Recent Activity
+          table.table.table-hover.table-striped
+            tbody
+              tr
+                td
+                  strong Abby
+                  |  joined ACME Project Team in 
+                  strong `Collaboration`
+              tr
+                td
+                  strong Gary
+                  |  deleted My Board1 in 
+                  strong `Discussions`
+              tr
+                td
+                  strong Kensington
+                  |  deleted MyBoard3 in 
+                  strong `Discussions`
+              tr
+                td
+                  strong John
+                  |  deleted My Board1 in 
+                  strong `Discussions`
+              tr
+                td
+                  strong Skell
+                  |  deleted his post Look at Why this is.. in 
+                  strong `Discussions`
+    .col-lg-4.pull-lg-8.text-xs-center
+      img.m-x-auto.img-fluid.img-circle(src= user.avatar, alt='avatar')
+      h6.m-t-2 Upload a different photo
+      label.custom-file
+        input#file.custom-file-input(type='file')
+        span.custom-file-control Choose file

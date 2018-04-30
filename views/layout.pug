@@ -1,0 +1,56 @@
+html(lang='fr')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    meta(name='description', content='')
+    meta(name='author', content='Sarah Duault')
+    title Tableau de bord
+    // Bootstrap core CSS
+    link(href='/assets/css/bootstrap.min.css', type='text/css', rel='stylesheet')
+    // Custom styles for this template
+    block stylesheets
+  body
+    block navbar
+      nav.navbar.navbar-dark.fixed-top.bg-dark.flex-md-nowrap.p-0.shadow
+        a.navbar-brand.col-sm-3.col-md-2.mr-0(href='/') Company name
+        input.form-control.form-control-dark.w-100(type='text', placeholder='Search', aria-label='Search', id='search')
+        ul.navbar-nav.px-3
+          li.nav-item.text-nowrap: a.nav-link(href='/logout') Sign out
+    .container-fluid
+      .row
+        nav.col-md-2.d-none.d-md-block.bg-light.sidebar
+          .sidebar-sticky
+            ul.nav.flex-column
+              for button in sidebar.buttons
+                li.nav-item
+                  if button.active
+                    a.nav-link.active(href=button.href)
+                      span(data-feather=button.icon)
+                      = button.name
+                      span.sr-only (current)
+                  else
+                    a.nav-link(href=button.href)
+                      span(data-feather=button.icon)
+                      = button.name
+        main.col-md-9.ml-sm-auto.col-lg-10.px-4(role='main')
+          if top
+            .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.pt-3.pb-2.mb-3
+              h1.h2= top.title
+              .btn-toolbar.mb-2.mb-md-0
+              .btn-group.mr-2
+                if button
+                  for button in top.buttons
+                    button.btn.btn-sm(id= button.id, class= button.class)
+                      = button.name
+            if top.title2
+              hr
+              h2.pb-4= top.title2
+          block content
+    block scripts
+      script(src='/assets/js/jquery-3.3.1.min.js')
+      script(src='/assets/js/popper.min.js')
+      script(src='/assets/js/bootstrap.min.js')
+    // Icons
+    script(src='https://unpkg.com/feather-icons/dist/feather.min.js')
+    script.
+      feather.replace()

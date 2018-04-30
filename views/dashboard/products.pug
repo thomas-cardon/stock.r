@@ -1,0 +1,28 @@
+extends ../layout.pug
+
+block stylesheets
+  link(href='/assets/css/dashboard.css', type='text/css', rel='stylesheet')
+block content
+  section.jumbotron.text-center
+    .container
+        h1.jumbotron-heading Produits
+        p.lead.text-muted Voici tous les produits en stock.
+  .album.py-5.bg-light
+    .container
+      #products.row
+        for product in products
+          .col-md-4(id= product.id)
+            .card.mb-4.box-shadow
+              img.card-img-top(src= product.image, style='height: 225px; width: 100%; display: block;')
+              .card-body
+                p.card-text= product.desc
+                .d-flex.justify-content-between.align-items-center
+                  .btn-group
+                    button#view.btn.btn-sm.btn-outline-secondary(type='button') View
+                    button#edit.btn.btn-sm.btn-outline-secondary(type='button') Edit
+              .card-footer
+                i.text-left(data-feather='package')
+                small.text-muted.text-sm-left
+                  | Quantité: 
+                  strong= product.qty
+                small.text-muted.text-right= ' Emplacement ' + product.location

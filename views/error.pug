@@ -1,0 +1,30 @@
+html(lang='fr')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    meta(name='description', content='')
+    meta(name='author', content='Sarah Duault')
+    title= 'Erreur ' + error.status
+    // Bootstrap core CSS
+    link(href='/assets/css/bootstrap.min.css', type='text/css', rel='stylesheet')
+    // Custom styles for this template
+    block stylesheets
+      link(href='/assets/css/error.css', type='text/css', rel='stylesheet')
+  body
+    main.container(role='main')
+      h1.mt-5= 'Erreur ' + error.status
+      p.lead= error.message
+      p
+        | Vous pouvez contacter 
+        a(href='/support') le support
+        |  en cas de besoin
+    footer.footer
+      .container
+        span.text-muted © Sarah Duault, 2018
+    script(src='/assets/js/jquery-3.3.1.min.js')
+    script(src='/assets/js/popper.min.js')
+    script(src='/assets/js/bootstrap.min.js')
+    // Icons
+    script(src='https://unpkg.com/feather-icons/dist/feather.min.js')
+    script.
+      feather.replace()

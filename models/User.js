@@ -18,12 +18,12 @@ let UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
-  }
+  },
+  desc: { type: String, default: 'Cet utilisateur n\'a pas de description.' }
 });
 
 //authenticate input against database
 UserSchema.statics.authenticate = async function (email, password) {
-  console.log('test');
   let users = await this.find({}, { _id: 0 /* Supprime _id de l'objet parce qu'on à déjà id */ }).or([{ email: email }, { username: email }]).lean().exec();
 
   if (users.length === 0) {
@@ -33,8 +33,6 @@ UserSchema.statics.authenticate = async function (email, password) {
   }
 
   return users[0]; // GRAVE BUGGE POUR L'INSTANT, ON FORCE LE RETOUR DE L'UTILISATEUR SANS S'ASSURER QUE LE MOT DE PASSE FONCTIONNE, BCRYPT N'ARRIVE PAS A VOIR QUE LE HASH = MDP
-
-  console.log(password, users[0].password);
 
   let match = await bcrypt.compare(password, users[0].password);
 

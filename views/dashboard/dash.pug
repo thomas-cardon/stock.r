@@ -1,0 +1,34 @@
+extends ../layout.pug
+
+block stylesheets
+  link(href='/assets/css/dashboard.css', type='text/css', rel='stylesheet')
+block content
+    .row
+      .col-sm-3
+        .card.text-white.bg-success.mb-3(style='width: 18rem;')
+          .card-header
+            | 17 disques durs
+          .card-body
+            h5.card-title Nocturnal Desktops
+            p.card-text Vous pouvez aller chercher le produit.
+            button.btn.btn-dark(type='button') Marquer comme fait
+          .card-footer.text-white
+            | Il y a deux jours
+      .col-sm-3
+        .card.text-white.bg-danger.mb-3(style='width: 18rem;')
+          .card-header
+            | 12 tondeuses
+          .card-body
+            h5.card-title Glasscannon Enterprises
+            p.card-text Commentaire: Commande annulée
+          .card-footer.text-white
+            | Le 17 janvier 2018 à 09:05:30
+      .col-sm-3
+        .card.text-white.bg-dark.mb-3(style='width: 18rem;')
+          .card-header
+            | 1977 boulons
+          .card-body
+            h5.card-title X Motorbikes
+            p.card-text Demande terminée.
+          .card-footer.text-white
+            | Le 18 mars 2018 à 17:59:30
