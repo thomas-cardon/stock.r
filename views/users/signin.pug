@@ -1,0 +1,28 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    meta(name='description', content='')
+    meta(name='author', content='Sarah Duault')
+    link(rel='icon', href='/assets/favicon.ico')
+    title Random Company
+    // Bootstrap core CSS
+    link(href='/assets/css/bootstrap.min.css', rel='stylesheet')
+    // Custom styles for this template
+    link(href='/assets/css/signin.css', rel='stylesheet')
+  body
+    form.form-signin(action='/users/login', method='post')
+      .text-center.mb-4
+        img.mb-4(src='/assets/img/company.png', alt='', width='72', height='72')
+        h1.h3.mb-3.font-weight-normal Random Company
+        p
+          | Connectez vous en utilisant les identifiants précédemment envoyés.
+      .form-label-group
+        input#emailOrUsername.form-control(type='text', placeholder='Adresse mail ou pseudonyme', name='emailOrUsername', required='', autofocus='')
+        label(for='emailOrUsername') Adresse mail ou pseudonyme
+      .form-label-group
+        input#password.form-control(type='password', placeholder='Mot de passe', name='password', required='', )
+        label(for='password') Mot de passe
+      button.btn.btn-lg.btn-primary.btn-block(type='submit') Connexion
+      p.mt-5.mb-3.text-muted.text-center © 2018-2019

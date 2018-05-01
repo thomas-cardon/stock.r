@@ -3,32 +3,134 @@ extends ../layout.pug
 block stylesheets
   link(href='/assets/css/dashboard.css', type='text/css', rel='stylesheet')
 block content
-    .row
-      .col-sm-3
-        .card.text-white.bg-success.mb-3(style='width: 18rem;')
-          .card-header
-            | 17 disques durs
-          .card-body
-            h5.card-title Nocturnal Desktops
-            p.card-text Vous pouvez aller chercher le produit.
-            button.btn.btn-dark(type='button') Marquer comme fait
-          .card-footer.text-white
-            | Il y a deux jours
-      .col-sm-3
-        .card.text-white.bg-danger.mb-3(style='width: 18rem;')
-          .card-header
-            | 12 tondeuses
-          .card-body
-            h5.card-title Glasscannon Enterprises
-            p.card-text Commentaire: Commande annulée
-          .card-footer.text-white
-            | Le 17 janvier 2018 à 09:05:30
-      .col-sm-3
-        .card.text-white.bg-dark.mb-3(style='width: 18rem;')
-          .card-header
-            | 1977 boulons
-          .card-body
-            h5.card-title X Motorbikes
-            p.card-text Demande terminée.
-          .card-footer.text-white
-            | Le 18 mars 2018 à 17:59:30
+      if (false)
+        canvas#demands
+      if (products.length > 0)
+        .row
+          each product in products
+            each demand in product.demands
+              .col-sm-3
+                .card.mb-3(class=demand.status === 'AWAITING_VALIDATION' ? "bg-dark text-white" : "bg-light", style='width: 18rem;')
+                  .card-header
+                    = product.name
+                    i.float-right(data-feather='maximize-2')
+                  .card-body
+                    h5.card-title(style='overflow: hidden; text-overflow: ellipsis; white-space: nowrap;')= demand.clientName
+                    if demand.status == 'AWAITING_VALIDATION'
+                      p.card-text En attente de réponse
+                      button.btn.btn-dark.btn-sm.active.btn-disabled(type='button') En attente
+                    else if demand.status == 'VALIDATED'
+                      p.card-text Allez chercher le(s) produit(s).
+                      button.btn.btn-warning.btn-sm(type='button') Marquer comme fait
+                    else if demand.status == 'CANCELLED'
+                      p.card-text Commande annulée
+                      button.btn.btn-success.btn-sm(type='button') Cacher
+                    else if demand.status == 'DONE'
+                        p.card-text Commande terminée
+                        button.btn.btn-success.btn-sm(type='button') Cacher
+                  .card-footer(class=demand.status !== 'AWAITING_VALIDATION' ? "text-muted" : "", style='width: 18rem;')
+                    | Il y a deux jours
+      else
+        p.lead.text-muted.text-center Il n'y a aucune demande en cours.
+block append scripts
+  script(src='/assets/js/Chart.bundle.min.js')
+  if (false)
+    script.
+      let ctx = document.getElementById("demands");
+      
+      function getRandomColor() {
+        let letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+      }
+      
+      function randomDate(start, end = new Date()) {
+        return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+      }
+
+      let chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          datasets: [{
+            data: [{
+              y: 0,
+              x: randomDate(new Date(2018, 04, 20), new Date(2018, 04, 23))
+            },
+            {
+              y: 17,
+              x: randomDate(new Date(2018, 04, 23), new Date(2018, 04, 25))
+            },
+            {
+              y: 120,
+              x: randomDate(new Date(2018, 04, 27))
+            }],
+            lineTension: 0,
+            backgroundColor: 'transparent',
+            borderColor: getRandomColor(),
+            borderWidth: 4,
+            pointBackgroundColor: '#007bff'
+          },
+          {
+            data: [{
+              y: 789,
+              x: randomDate(new Date(2018, 04, 20), new Date(2018, 04, 23))
+            },
+            {
+              y: 1450,
+              x: randomDate(new Date(2018, 04, 23), new Date(2018, 04, 25))
+            },
+            {
+              y: 3000,
+              x: randomDate(new Date(2018, 04, 27))
+            }],
+            backgroundColor: 'transparent',
+            borderColor: getRandomColor(),
+            borderWidth: 4,
+            pointBackgroundColor: '#007bff'
+          },
+          {
+            data: [{
+              y: 0,
+              x: randomDate(new Date(2018, 04, 20), new Date(2018, 04, 23))
+            },
+            {
+              y: 14,
+              x: randomDate(new Date(2018, 04, 23), new Date(2018, 04, 25))
+            },
+            {
+              y: 75,
+              x: randomDate(new Date(2018, 04, 27))
+            }],
+            backgroundColor: 'transparent',
+            borderColor: getRandomColor(),
+            borderWidth: 4,
+            pointBackgroundColor: '#007bff'
+          }]
+        },
+        options: {
+          scales: {
+            xAxes: [{
+              ticks: {
+                beginAtZero: false
+              },
+              type: 'time',
+              time: {
+                displayFormats: {
+                    quarter: 'day'
+                }
+              }
+            }],
+            yAxes: [{
+              ticks: {
+                beginAtZero: false
+              }
+            }]
+          },
+          legend: {
+            display: false,
+          }
+        }
+      });

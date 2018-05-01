@@ -15,11 +15,11 @@ block content
             .card.mb-4.box-shadow
               img.card-img-top(src= product.image, style='height: 225px; width: 100%; display: block;')
               .card-body
-                p.card-text= product.desc
+                p.card-text(style='white-space: nowrap; overflow: hidden; text-overflow: ellipsis;')= product.desc
                 .d-flex.justify-content-between.align-items-center
                   .btn-group
-                    button#view.btn.btn-sm.btn-outline-secondary(type='button') View
-                    button#edit.btn.btn-sm.btn-outline-secondary(type='button') Edit
+                    button#view.btn.btn-sm.btn-outline-secondary(type='button') Voir
+                    button#edit.btn.btn-sm.btn-outline-secondary(type='button') Editer
               .card-footer
                 i.text-left(data-feather='package')
                 small.text-muted.text-sm-left

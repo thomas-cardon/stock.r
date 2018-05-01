@@ -15,7 +15,7 @@ html(lang='fr')
         a.navbar-brand.col-sm-3.col-md-2.mr-0(href='/') Company name
         input.form-control.form-control-dark.w-100(type='text', placeholder='Search', aria-label='Search', id='search')
         ul.navbar-nav.px-3
-          li.nav-item.text-nowrap: a.nav-link(href='/logout') Sign out
+          li.nav-item.text-nowrap: a.nav-link(href='/users/logout') Sign out
     .container-fluid
       .row
         nav.col-md-2.d-none.d-md-block.bg-light.sidebar
@@ -38,7 +38,7 @@ html(lang='fr')
               h1.h2= top.title
               .btn-toolbar.mb-2.mb-md-0
               .btn-group.mr-2
-                if button
+                if top.buttons
                   for button in top.buttons
                     button.btn.btn-sm(id= button.id, class= button.class)
                       = button.name

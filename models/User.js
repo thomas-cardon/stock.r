@@ -42,6 +42,8 @@ UserSchema.statics.authenticate = async function (email, password) {
 
 // Hasher le mot de passe avant la sauvegarde
 UserSchema.pre('save', function (next) {
+  if (!this.isNew) return next();
+  
   let user = this;
   bcrypt.hash(user.password, 10, function (err, hash) {
     if (err) {

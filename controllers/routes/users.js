@@ -3,11 +3,17 @@ let User = require('mongoose').model('User');
 let ActivityLog = require('mongoose').model('ActivityLog');
 
 router.post('/login', function (req, res, next) {
-  if (!req.body.emailOrUsername || !req.body.password) return;
+  if (!req.body.emailOrUsername || !req.body.password) {
+    let err = new Error('Erreur de paramètres!');
+    err.status = 401;
+    err.codeblock = req.body;
+    return next(err);
+  };
+
   User.authenticate(req.body.emailOrUsername, req.body.password).then(user => {
     if (!user) {
       let err = new Error('Mauvais mot de passe!');
-      err.status = 404;
+      err.status = 401;
       return next(err);
     }
 
@@ -21,7 +27,7 @@ router.post('/login', function (req, res, next) {
 router.get('/profile/:id', async function (req, res, next) {
   if (req.session.userRank < 1000) {
     let err = new Error('Vous n\'êtes pas autorisés à entrer ici.');
-    err.status = 400;
+    err.status = 401;
     return next(err);
   }
 
@@ -36,9 +42,12 @@ router.get('/profile/:id', async function (req, res, next) {
 
     users[0].password = undefined; // Security measures
 
+    let logs = await ActivityLog.find({ user: users[0].id }).sort('-line').limit(30).lean().exec();
+    console.dir(logs);
+
     res.render('users/profile', {
       user: users[0],
-      logs: await ActivityLog.find({ user: users[0].id }).limit(30).lean().exec(),
+      logs: logs,
       top: {
         title: 'Tableau de bord',
         title2: 'Profil utilisateur',

@@ -25,34 +25,12 @@ block content
         .col-md-12
           h4.m-t-2
             span.fa.fa-clock-o.ion-clock.pull-xs-right
-            |  Recent Activity
+            |  Activité récente
           table.table.table-hover.table-striped
             tbody
-              tr
-                td
-                  strong Abby
-                  |  joined ACME Project Team in 
-                  strong `Collaboration`
-              tr
-                td
-                  strong Gary
-                  |  deleted My Board1 in 
-                  strong `Discussions`
-              tr
-                td
-                  strong Kensington
-                  |  deleted MyBoard3 in 
-                  strong `Discussions`
-              tr
-                td
-                  strong John
-                  |  deleted My Board1 in 
-                  strong `Discussions`
-              tr
-                td
-                  strong Skell
-                  |  deleted his post Look at Why this is.. in 
-                  strong `Discussions`
+              for log in logs
+                tr
+                  td= log.line
     .col-lg-4.pull-lg-8.text-xs-center
       img.m-x-auto.img-fluid.img-circle(src= user.avatar, alt='avatar')
       h6.m-t-2 Upload a different photo

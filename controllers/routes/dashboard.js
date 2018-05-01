@@ -6,9 +6,27 @@ let router = express.Router();
 let User = require('mongoose').model('User');
 let Product = require('mongoose').model('Product');
 
-router.get('/', function (req, res, next) {
-  // sendFile(path.resolve(`${__dirname}/../../server/${req.session.userRank >= 1000 ? 'superuser' : 'dashboard'}.html`))
-  if (req.session.userId) res.render('dashboard/dash', {
+router.get('/', async function (req, res, next) {
+  if (!req.session.userId) return res.redirect('/');
+
+  let q = [{ 'demands.issuedBy': req.session.userId }, { 'demands.for': req.session.userId }];
+
+  /*
+  * Si le rang est considéré comme Admin, alors il rajoute une query qui envoie tous les produits ayant une demande existante n'étant pas terminée.
+  * $ne -> "Not equals"
+  */
+
+  if (req.session.userRank >= 1000) q.push({ 'demands.0': { $exists: true }, status: { $ne: 'DONE' } });
+
+  let products = await Product.find().or(q).sort('-date').limit(4).lean().exec(), stats;
+  if (req.session.userRank >= 1000) {
+    q.push({ 'demands.0': { $exists: true }, status: { $ne: 'DONE' } });
+    stats = {};
+  }
+
+  return res.render('dashboard/dash', {
+    products: products,
+    stats: stats,
     top: {
       title: 'Tableau de bord',
       title2: 'Dernières demandes',
@@ -47,11 +65,6 @@ router.get('/', function (req, res, next) {
       }]
     }
   });
-  else {
-    var err = new Error('Vous n\'êtes pas autorisés à entrer ici.');
-    err.status = 400;
-    return next(err);
-  }
 });
 
 router.get('/products', async function (req, res, next) {
