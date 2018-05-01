@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "production": "NODE_ENV=production node .",
+    "start": "node .",
+    "populate": "node . populate",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ryzzzen,Sealrack",
