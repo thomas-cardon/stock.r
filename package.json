@@ -19,7 +19,7 @@
     "express": "^4.16.3",
     "express-session": "^1.15.6",
     "luxon": "^1.2.0",
-    "mongoose": "^5.0.16",
+    "mongoose": "^5.7.5",
     "pug": "^2.0.3",
     "samss": "^2.2.7"
   }
